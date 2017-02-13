@@ -1,12 +1,13 @@
 package com.example;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -42,5 +43,25 @@ public class DemoApplication {
 		return 1/(1+Math.pow(distance2Person, 0.5));
 	}
 
+	// 对相关的人进行相似度打分，获取对应的排序
+	public List<Map> sortPerson(int rank, String person, Map data){
+		List rankList = new ArrayList();
+		for(Object key : data.keySet()){
+			// 其他人的近似分数
+			if(!StringUtils.equals(key.toString(), person)){
+				String personName = String.valueOf(key);
+				double simValue = simDistance(data, person, personName);
+				rankList.add(simValue);
+			}
+		}
+
+		Collections.sort(rankList);
+		if(rank < 1){
+			return null;
+		}
+//		rankList.subList(0, )
+
+		return null;
+	}
 
 }
