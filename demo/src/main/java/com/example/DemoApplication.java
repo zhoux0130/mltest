@@ -125,7 +125,9 @@ public class DemoApplication {
 
         Collections.sort(list, valueComparator);
         if (rank < 1) {
+            System.out.print("");
             return null;
+
         }
         if (rank > list.size()) {
             return list;
