@@ -93,48 +93,45 @@ public class DemoApplication {
         if (b == 0) return 0;
 
 //        System.out.println(r);
-
-
         return r;
     }
 
     // 对相关的人进行相似度打分，获取对应的排序
     public static List<Map.Entry<String, Double>> sortPerson(int rank, String person, Map data) {
-        Map personScore = new HashMap();
+//        Map personScore = new HashMap();
+        List personScoreList = new ArrayList();
         for (Object key : data.keySet()) {
             // 其他人的近似分数
             if (!StringUtils.equals(key.toString(), person)) {
                 String personName = String.valueOf(key);
                 double simValue = simDistance1(data, person, personName);
-                personScore.put(key, simValue);
+                Item item = new Item(personName, simValue);
+                personScoreList.add(item);
             }
         }
 
-        Comparator<Map.Entry> valueComparator = new Comparator<Map.Entry>() {
+        Comparator<Item> valueComparator = new Comparator<Item>() {
             @Override
-            public int compare(Map.Entry o1, Map.Entry o2) {
-                Double v1 = (Double) o1.getValue();
-                Double v2 = (Double) o2.getValue();
-                return v1 - v2 > 0 ? 1 : 0;
+            public int compare(Item o1, Item o2) {
+               return  o2.getItemValue().compareTo(o1.getItemValue());
             }
         };
 
-
-        List<Map.Entry<String, Double>> list = new ArrayList<Map.Entry<String, Double>>(personScore.entrySet());
-        list.forEach(d -> System.out.println(d));
-
-        Collections.sort(list, valueComparator);
+        Collections.sort(personScoreList, valueComparator);
         if (rank < 1) {
-            System.out.print("");
             return null;
 
         }
-        if (rank > list.size()) {
-            return list;
+        if (rank > personScoreList.size()) {
+            return personScoreList;
         }
-        list = list.subList(0, rank);
+        personScoreList = personScoreList.subList(0, rank);
 
-        return list;
+        personScoreList.forEach( d -> System.out.println(d.toString()));
+
+
+
+        return null;
     }
 
 }
