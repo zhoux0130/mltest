@@ -16,13 +16,12 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
 
         // 获取原始数据，将其转换成对应的数据结构
-        //String originalData = "{'apple':{'A': 3.4,'B': 2.5, 'C': 4.4, 'D':3.8},'kiwi':{'A': 3.9,'E': 4.5, 'C': 3.4, 'D':4.0},'peach':{'A': 2.4,'B': 2.7, 'C': 4.1, 'D':3.8, 'E':4.2}}";
         String critics = "{'Lisa Rose':{'Lady in the Water':2.5,'Snakes on a Plane':3.5,'Just My Luck':3.0,'Superman Returns':3.5,'You, Me and Dupree':2.5,'The Night Listener':3.0},'Gene Seymour':{'Lady in the Water':3.0,'Snakes on a Plane':3.5,'Just My Luck':1.5,'Superman Returns':5.0,'You, Me and Dupree':3.5,'The Night Listener':3.0},'Micheal Phillips':{'Lady in the Water':2.5,'Snakes on a Plane':3.0,'Superman Returns':3.5,'The Night Listener':4.0},'Claudia Puig':{'Snakes on a Plane':3.5,'Just My Luck':3.0,'Superman Returns':4.0,'You, Me and Dupree':2.5,'The Night Listener':4.5},'Mick LaSalle':{'Lady in the Water':3.0,'Snakes on a Plane':4.0,'Just My Luck':2.0,'Superman Returns':3.0,'You, Me and Dupree':2.0,'The Night Listener':3.0},'Jack Matthews':{'Lady in the Water':3.0,'Snakes on a Plane':4.0,'Superman Returns':5.0,'You, Me and Dupree':3.5,'The Night Listener':3.0},'Toby':{'Snakes on a Plane':4.5,'Superman Returns':4.0,'You, Me and Dupree':1.0}}";
         Map originalMap = (Map) JSON.parse(critics);
         simDistance(originalMap, "Lisa Rose", "Gene Seymour");
         simDistance1(originalMap, "Lisa Rose", "Gene Seymour");
 
-//		sortPerson(4, "apple",originalMap);
+		sortPerson(3, "Toby",originalMap);
     }
 
     // 计算任意两个人的欧几米的距离，并获得对应的相似系数
@@ -48,6 +47,7 @@ public class DemoApplication {
     }
 
     // 通过皮尔逊方式，计算两个人的相似度
+    // Checked
     public static double simDistance1(Map data, String thePerson, String person) {
         Map thePersonData = (Map) data.get(thePerson);
         Map personData = (Map) data.get(person);
@@ -59,38 +59,40 @@ public class DemoApplication {
         double xSum = 0.0;
         double ySum = 0.0;
 
-        int n = 0;
-
+        // 先记录共同偏好
+        Map commonInstrest = new HashMap();
         for (Object key : thePersonData.keySet()) {
+            if(personData.containsKey(key)){
+                commonInstrest.put(key, 1);
+            }
+        }
+
+        int n = commonInstrest.size();
+        if (n == 0) {
+            n = 1; // 防止n作为分母出错
+        }
+
+        for (Object key : commonInstrest.keySet()) {
             BigDecimal xObj = (BigDecimal) thePersonData.get(key);
-            BigDecimal yObj = (BigDecimal) thePersonData.get(key);
+            BigDecimal yObj = (BigDecimal) personData.get(key);
 
             double x = xObj.doubleValue();
-            double y = 0.0;
-
-            if (yObj != null) {
-                y = yObj.doubleValue();
-                n++;
-            }
+            double y = yObj.doubleValue();
 
             xPowSum += Math.pow(x, 2);
             yPowSum += Math.pow(y, 2);
             mulSum += (x * y);
             xSum += x;
             ySum += y;
-
         }
 
-        if (n == 0) {
-            n = 1; // 防止n作为分母出错
-        }
         double a = mulSum - (xSum * ySum) / n;
         // TODO：协方差公式理解
         double b = Math.pow((xPowSum - Math.pow(xSum, 2) / n) * (yPowSum - Math.pow(ySum, 2) / n), 0.5);
         double r = a / b;
         if (b == 0) return 0;
 
-        System.out.println(r);
+//        System.out.println(r);
 
 
         return r;
@@ -103,7 +105,7 @@ public class DemoApplication {
             // 其他人的近似分数
             if (!StringUtils.equals(key.toString(), person)) {
                 String personName = String.valueOf(key);
-                double simValue = simDistance(data, person, personName);
+                double simValue = simDistance1(data, person, personName);
                 personScore.put(key, simValue);
             }
         }
@@ -119,17 +121,16 @@ public class DemoApplication {
 
 
         List<Map.Entry<String, Double>> list = new ArrayList<Map.Entry<String, Double>>(personScore.entrySet());
+        list.forEach(d -> System.out.println(d));
 
         Collections.sort(list, valueComparator);
         if (rank < 1) {
             return null;
         }
-        list.forEach(d -> System.out.println(d));
-
         if (rank > list.size()) {
             return list;
         }
-        list.subList(0, rank - 1);
+        list = list.subList(0, rank);
 
         return list;
     }
