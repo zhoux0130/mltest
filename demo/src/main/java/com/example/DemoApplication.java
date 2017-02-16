@@ -97,8 +97,8 @@ public class DemoApplication {
     }
 
     // 对相关的人进行相似度打分，获取对应的排序
+    // Checked
     public static List<Map.Entry<String, Double>> sortPerson(int rank, String person, Map data) {
-//        Map personScore = new HashMap();
         List personScoreList = new ArrayList();
         for (Object key : data.keySet()) {
             // 其他人的近似分数
@@ -127,11 +127,9 @@ public class DemoApplication {
         }
         personScoreList = personScoreList.subList(0, rank);
 
-        personScoreList.forEach( d -> System.out.println(d.toString()));
+//        personScoreList.forEach( d -> System.out.println(d.toString()));
 
-
-
-        return null;
+        return personScoreList;
     }
 
 }
