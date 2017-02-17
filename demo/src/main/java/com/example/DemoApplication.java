@@ -22,6 +22,8 @@ public class DemoApplication {
         simDistance1(originalMap, "Lisa Rose", "Gene Seymour");
 
 		sortPerson(3, "Toby",originalMap);
+
+        RecommendUtil.getRecommendation(originalMap, "Toby");
     }
 
     // 计算任意两个人的欧几米的距离，并获得对应的相似系数
