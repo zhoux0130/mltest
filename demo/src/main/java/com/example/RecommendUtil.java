@@ -1,10 +1,10 @@
 package com.example;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by apple on 2017/2/17.
@@ -20,7 +20,6 @@ public class RecommendUtil {
      */
     public static void getRecommendation(Map originalData, String person) {
         // 先找出Tony没有关注的物品
-        Set allItem = new HashSet<>();
         Map personData = (Map) originalData.get(person);
         Map itemSumSim = new HashMap();
         Map itemSumScore = new HashMap();
