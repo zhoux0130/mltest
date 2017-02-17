@@ -25,9 +25,6 @@ public class RecommendUtil {
         Map itemSumSim = new HashMap();
         Map itemSumScore = new HashMap();
 
-        double sumSim = 0.0;
-        double sumScore = 0.0;
-
         for (Object key : originalData.keySet()) {
             // 只和别人比较
             if (StringUtils.equals(person, key.toString())) {
