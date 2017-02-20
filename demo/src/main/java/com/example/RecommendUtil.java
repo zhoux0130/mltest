@@ -3,8 +3,8 @@ package com.example;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by apple on 2017/2/17.
@@ -76,6 +76,25 @@ public class RecommendUtil {
             itemRealScore.put(k, recommendScore);
         });
 
+//        LinkedHashMap<String, Double> orderMap = itemRealScore.entrySet().stream()
+//                .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
+//                .collect(Collectors.toMap(
+//                        Map.Entry::getKey,
+//                        Map.Entry::getValue,
+//                        (e1, e2) -> e1,
+//                        LinkedHashMap::new
+//                ));
+        Comparator<Map.Entry<String, Double>> valueComparator = new Comparator<Map.Entry<String, Double>>() {
+            @Override
+            public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
+                double value = o1.getValue()-o2.getValue();
+                return  (int) value;
+            }
+        };
+        List<Map.Entry<String, Double>> list = new ArrayList<Map.Entry<String,Double>>(itemRealScore.entrySet());
+        Collections.sort(list, valueComparator);
+        list.forEach(a -> System.out.println(a.getKey() + ":" + a.getValue()));
+
         itemRealScore.forEach((k, v) -> System.out.println(k.toString() + ":" + v.toString()));
 
     }
@@ -128,6 +147,39 @@ public class RecommendUtil {
 
 //        System.out.println(r);
         return r;
+    }
+
+    /**
+     * 将之前的输入数据源进行转置，例如key：人名,value: 物品名称及对应评分
+     * 转置之后为：key：物品
+     *           value：人名及对应评分
+     *
+     * @param originalData
+     * @return
+     */
+    public static Map transformPrefs(Map originalData){
+        Map newOriginalData = new HashMap();
+        for(Object person: originalData.entrySet()){
+            String personName = ((Map.Entry<String, Map>) person).getKey();
+            Map personValue = ((Map.Entry<String, Map>) person).getValue();
+
+            for(Object item: personValue.entrySet()){
+                String itemName = ((Map.Entry<String, BigDecimal>) item).getKey();
+                BigDecimal itemValue = ((Map.Entry<String, BigDecimal>) item).getValue();
+
+                Map itemValueMap = null;
+                if(newOriginalData.containsKey(itemName)){
+                    itemValueMap = (Map) newOriginalData.get(itemName);
+                }else {
+                    itemValueMap = new HashMap();
+                    newOriginalData.put(itemName, itemValueMap);
+                }
+                itemValueMap.put(personName, itemValue);
+            }
+        }
+        newOriginalData.forEach((k, v)->System.out.println(k + ":" + v));
+
+        return newOriginalData;
     }
 
 }

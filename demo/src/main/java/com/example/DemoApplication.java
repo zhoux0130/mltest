@@ -24,6 +24,8 @@ public class DemoApplication {
 		sortPerson(3, "Toby",originalMap);
 
         RecommendUtil.getRecommendation(originalMap, "Toby");
+        //Test transform
+        RecommendUtil.transformPrefs(originalMap);
     }
 
     // 计算任意两个人的欧几米的距离，并获得对应的相似系数
