@@ -182,4 +182,21 @@ public class RecommendUtil {
         return newOriginalData;
     }
 
+    public static void getRecommendations(Map data, String person){
+        Map itemScore = new HashMap();
+        Map itemData = transformPrefs(data);
+
+        for(Object item : itemData.entrySet()){
+            // 只获取别人的评价内容
+            item = (Map) item;
+            if(((Map) item).containsKey(person)){
+                continue;
+            }
+
+
+
+
+        }
+    }
+
 }
